@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import paperRouter from "./routes/paper.route.js";
+import analyticsRouter from "./routes/analytics.route.js";
 dotenv.config();
 
 const app = express();
@@ -9,8 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 app.use("/api/papers", paperRouter);
+app.use("/api/analytics", analyticsRouter);
 
 const PORT = process.env.PORT || 5000;
 
