@@ -7,12 +7,16 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://research-paper-reading-tracker-fawn.vercel.app/"
-  ]
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://research-paper-reading-tracker-fawn.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 app.use("/api/papers", paperRouter);
