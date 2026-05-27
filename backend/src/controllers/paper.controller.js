@@ -64,19 +64,19 @@ const getPapers = async (req, res) => {
     const whereClause = {}
 
     if (domains) {
-      where.researchDomain = {
+      whereClause.researchDomain = {
         in: domains.split(","),
       };
     }
 
     if (stages) {
-      where.readingStage = {
+      whereClause.readingStage = {
         in: stages.split(","),
       };
     }
 
     if (impacts) {
-      where.impactScore = {
+      whereClause.impactScore = {
         in: impacts.split(","),
       };
     }
@@ -98,7 +98,7 @@ const getPapers = async (req, res) => {
         startDate.setMonth(now.getMonth() - 3);
       }
 
-      where.dateAdded = {
+      whereClause.dateAdded = {
         gte: startDate,
       };
     }
