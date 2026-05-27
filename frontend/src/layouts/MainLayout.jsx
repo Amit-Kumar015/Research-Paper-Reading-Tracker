@@ -34,8 +34,8 @@ function MainLayout() {
               to={item.path}
               className={`block rounded-lg px-4 py-2 ${
                 location.pathname === item.path
-                  ? "bg-black text-white"
-                  : "hover:bg-slate-200"
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-blue-100"
               }`}
             >
               {item.label}

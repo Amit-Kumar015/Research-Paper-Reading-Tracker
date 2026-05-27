@@ -5,12 +5,7 @@ import {
   impactScores,
   dateFilters,
 } from "../data/constants";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -40,32 +35,20 @@ function Library() {
       const params = new URLSearchParams();
 
       if (filters.domains.length) {
-        params.append(
-          "domains",
-          filters.domains.join(",")
-        );
+        params.append("domains", filters.domains.join(","));
       }
 
       if (filters.stages.length) {
-        params.append(
-          "stages",
-          filters.stages.join(",")
-        );
+        params.append("stages", filters.stages.join(","));
       }
 
       if (filters.impacts.length) {
-        params.append(
-          "impacts",
-          filters.impacts.join(",")
-        );
+        params.append("impacts", filters.impacts.join(","));
       }
 
-      params.append(
-        "dateFilter",
-        filters.dateFilter
-      );
+      params.append("dateFilter", filters.dateFilter);
 
-      const {data} = await getAllPapers(params.toString());
+      const { data } = await getAllPapers(params.toString());
       setPapers(data.data);
     } catch (error) {
       console.error(error);
@@ -94,173 +77,152 @@ function Library() {
 
   return (
     <div className="space-y-6">
-      {/* Heading */}
-
       <div>
-        <h1 className="text-3xl font-bold">
-          Paper Library
-        </h1>
+        <h1 className="text-3xl font-bold">Paper Library</h1>
 
-        <p className="text-slate-500">
-          Browse and filter research papers
-        </p>
+        <p className="text-slate-500">Browse and filter research papers</p>
       </div>
 
-      {/* Filters */}
+      <div
+        className="rounded-xl px-4 py-2"
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e4e7ef",
+          boxShadow: "0 1px 4px 0 rgba(0,0,0,0.06)",
+        }}
+      >
+        <div className="mb-3 text-xl font-semibold tracking-tight">Filters</div>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-gray-700 font-semibold uppercase tracking-widest w-28 shrink-0">
+              Domain
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {researchDomains.map((domain) => {
+                const active = filters.domains.includes(domain);
+                return (
+                  <button
+                    key={domain}
+                    onClick={() => toggleFilter("domains", domain)}
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    style={{
+                      background: active ? "#6366f1" : "#f3f4f6",
+                      color: active ? "#ffffff" : "#6b7280",
+                      border: `1px solid ${active ? "#6366f1" : "#e4e7ef"}`,
+                    }}
+                  >
+                    {domain.replaceAll("_", " ")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        {/* Domains */}
+          <div className="h-px bg-gray-100" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Research Domain
-            </CardTitle>
-          </CardHeader>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-gray-700 font-semibold uppercase tracking-widest w-28 shrink-0">
+              Stage
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {readingStages.map((stage) => {
+                const active = filters.stages.includes(stage);
+                return (
+                  <button
+                    key={stage}
+                    onClick={() => toggleFilter("stages", stage)}
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    style={{
+                      background: active ? "#3b82f6" : "#f3f4f6",
+                      color: active ? "#ffffff" : "#6b7280",
+                      border: `1px solid ${active ? "#3b82f6" : "#e4e7ef"}`,
+                    }}
+                  >
+                    {stage.replaceAll("_", " ")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-          <CardContent className="space-y-3">
-            {researchDomains.map((domain) => (
-              <div
-                key={domain}
-                className="flex items-center gap-2"
-              >
-                <Checkbox
-                  checked={filters.domains.includes(
-                    domain
-                  )}
-                  onCheckedChange={() =>
-                    toggleFilter(
-                      "domains",
-                      domain
-                    )
-                  }
-                />
+          <div className="h-px bg-gray-100" />
 
-                <label className="text-sm">
-                  {domain.replaceAll("_", " ")}
-                </label>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-gray-700 font-semibold uppercase tracking-widest w-28 shrink-0">
+              Impact
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {impactScores.map((impact) => {
+                const active = filters.impacts.includes(impact);
+                const accentMap = {
+                  HIGH_IMPACT: { on: "#10b981", off: "#f3f4f6" },
+                  MEDIUM_IMPACT: { on: "#f59e0b", off: "#f3f4f6" },
+                  LOW_IMPACT: { on: "#6b7280", off: "#f3f4f6" },
+                };
+                const accent = accentMap[impact] ?? {
+                  on: "#6366f1",
+                  off: "#f3f4f6",
+                };
+                return (
+                  <button
+                    key={impact}
+                    onClick={() => toggleFilter("impacts", impact)}
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    style={{
+                      background: active ? accent.on : accent.off,
+                      color: active ? "#ffffff" : "#6b7280",
+                      border: `1px solid ${active ? accent.on : "#e4e7ef"}`,
+                    }}
+                  >
+                    {impact.replaceAll("_", " ")}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        {/* Reading Stages */}
+          <div className="h-px bg-gray-100" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Reading Stage
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-3">
-            {readingStages.map((stage) => (
-              <div
-                key={stage}
-                className="flex items-center gap-2"
-              >
-                <Checkbox
-                  checked={filters.stages.includes(
-                    stage
-                  )}
-                  onCheckedChange={() =>
-                    toggleFilter(
-                      "stages",
-                      stage
-                    )
-                  }
-                />
-
-                <label className="text-sm">
-                  {stage.replaceAll("_", " ")}
-                </label>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Impact */}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Impact Score
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-3">
-            {impactScores.map((impact) => (
-              <div
-                key={impact}
-                className="flex items-center gap-2"
-              >
-                <Checkbox
-                  checked={filters.impacts.includes(
-                    impact
-                  )}
-                  onCheckedChange={() =>
-                    toggleFilter(
-                      "impacts",
-                      impact
-                    )
-                  }
-                />
-
-                <label className="text-sm">
-                  {impact.replaceAll("_", " ")}
-                </label>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Date Filter */}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-gray-700 font-semibold uppercase tracking-widest w-28 shrink-0">
               Date Added
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-3">
-            {dateFilters.map((date) => (
-              <div
-                key={date.value}
-                className="flex items-center gap-2"
-              >
-                <Checkbox
-                  checked={
-                    filters.dateFilter ===
-                    date.value
-                  }
-                  onCheckedChange={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      dateFilter: date.value,
-                    }))
-                  }
-                />
-
-                <label className="text-sm">
-                  {date.label}
-                </label>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {dateFilters.map((date) => {
+                const active = filters.dateFilter === date.value;
+                return (
+                  <button
+                    key={date.value}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        dateFilter: active ? null : date.value,
+                      }))
+                    }
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    style={{
+                      background: active ? "#8b5cf6" : "#f3f4f6",
+                      color: active ? "#ffffff" : "#6b7280",
+                      border: `1px solid ${active ? "#8b5cf6" : "#e4e7ef"}`,
+                    }}
+                  >
+                    {date.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Table */}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>
+      <div className="w-full rounded-xl border bg-white p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-2xl font-semibold tracking-tight">
             Research Papers
-          </CardTitle>
-        </CardHeader>
+          </h3>
+        </div>
 
-        <CardContent>
+        <div>
           {loading ? (
             <div className="space-y-4">
               <Skeleton className="h-12 w-full" />
@@ -274,85 +236,56 @@ function Library() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    Paper Title
-                  </TableHead>
+                <TableRow className="text-lg font-semibold">
+                  <TableHead>Paper Title</TableHead>
 
-                  <TableHead>
-                    Author
-                  </TableHead>
+                  <TableHead>Author</TableHead>
 
-                  <TableHead>
-                    Domain
-                  </TableHead>
+                  <TableHead>Domain</TableHead>
 
-                  <TableHead>
-                    Stage
-                  </TableHead>
+                  <TableHead>Stage</TableHead>
 
-                  <TableHead>
-                    Citations
-                  </TableHead>
+                  <TableHead>Citations</TableHead>
 
-                  <TableHead>
-                    Impact
-                  </TableHead>
+                  <TableHead>Impact</TableHead>
 
-                  <TableHead>
-                    Date Added
-                  </TableHead>
+                  <TableHead>Date Added</TableHead>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
                 {papers.map((paper) => (
-                  <TableRow key={paper.id}>
+                  <TableRow key={paper.id} className="text-gray-800">
                     <TableCell className="font-medium">
                       {paper.paperTitle}
                     </TableCell>
 
+                    <TableCell>{paper.firstAuthorName}</TableCell>
+
                     <TableCell>
-                      {paper.firstAuthorName}
+                      {paper.researchDomain.replaceAll("_", " ")}
                     </TableCell>
 
                     <TableCell>
-                      {paper.researchDomain.replaceAll(
-                        "_",
-                        " "
-                      )}
+                      {paper.readingStage.replaceAll("_", " ")}
+                    </TableCell>
+
+                    <TableCell>{paper.citationCount}</TableCell>
+
+                    <TableCell>
+                      {paper.impactScore.replaceAll("_", " ")}
                     </TableCell>
 
                     <TableCell>
-                      {paper.readingStage.replaceAll(
-                        "_",
-                        " "
-                      )}
-                    </TableCell>
-
-                    <TableCell>
-                      {paper.citationCount}
-                    </TableCell>
-
-                    <TableCell>
-                      {paper.impactScore.replaceAll(
-                        "_",
-                        " "
-                      )}
-                    </TableCell>
-
-                    <TableCell>
-                      {new Date(
-                        paper.dateAdded
-                      ).toLocaleDateString()}
+                      {new Date(paper.dateAdded).toLocaleDateString()}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
