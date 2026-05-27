@@ -9,7 +9,8 @@ const app = express();
 
 app.use(cors({
   origin: [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://research-paper-reading-tracker-fawn.vercel.app/"
   ]
 }));
 app.use(express.json());
