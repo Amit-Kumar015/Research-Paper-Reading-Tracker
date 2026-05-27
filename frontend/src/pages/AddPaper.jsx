@@ -1,5 +1,4 @@
 import { useState } from "react";
-import api from "../services/baseApi";
 import {
   researchDomains,
   readingStages,
@@ -7,12 +6,7 @@ import {
 } from "../data/constants";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -21,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createPaper } from "@/services/paperApi";
+import { toast } from "sonner";
 
 function AddPaper() {
   const [loading, setLoading] = useState(false);
@@ -43,14 +38,24 @@ function AddPaper() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
+    setLoading(true);
 
+    if (
+      !formData.researchDomain ||
+      !formData.readingStage ||
+      !formData.impactScore
+    ) {
+      toast.error("Please fill in all required fields");
+      setLoading(false);
+      return;
+    }
+
+    try {
       await createPaper({
         ...formData,
         citationCount: Number(formData.citationCount),
       });
-      alert("Paper added successfully!");
+      toast.success("Paper added successfully");
 
       setFormData({
         paperTitle: "",
@@ -62,220 +67,151 @@ function AddPaper() {
         dateAdded: "",
       });
     } catch (error) {
-      console.error(error);
-
-      alert("Failed to add paper");
+      const msg = error?.response?.data?.message || "An error occurred";
+      console.error(msg);
+      toast.error("Failed to add paper");
     } finally {
       setLoading(false);
     }
   };
-  console.log(formData);
-  
 
   return (
-    <div className="max-w-3xl">
-      <Card>
+    <div className="h-screen flex items-center justify-center">
+      <Card className="max-w-3xl w-full shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">
+          <CardTitle className="text-3xl font-medium">
             Add Research Paper
           </CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6"
-          >
-            {/* Paper Title */}
-
+          <form onSubmit={handleSubmit} className="text-base space-y-6">
             <div className="space-y-2">
-              <label className="font-medium">
-                Paper Title
-              </label>
-
+              <label className="font-medium">Paper Title</label>
+              <span className="text-red-500">*</span>
               <Input
                 required
                 placeholder="Enter paper title"
                 value={formData.paperTitle}
-                onChange={(e) =>
-                  handleChange(
-                    "paperTitle",
-                    e.target.value
-                  )
-                }
+                onChange={(e) => handleChange("paperTitle", e.target.value)}
               />
             </div>
 
-            {/* Author */}
-
             <div className="space-y-2">
-              <label className="font-medium">
-                First Author Name
-              </label>
-
+              <label className="font-medium">First Author Name</label>
+              <span className="text-red-500">*</span>
               <Input
                 required
                 placeholder="Enter author name"
                 value={formData.firstAuthorName}
                 onChange={(e) =>
-                  handleChange(
-                    "firstAuthorName",
-                    e.target.value
-                  )
+                  handleChange("firstAuthorName", e.target.value)
                 }
               />
             </div>
 
-            {/* Domain */}
+            <div className="flex justify-between gap-4 w-full">
+              <div className="space-y-2 w-full flex-1">
+                <label className="font-medium">Research Domain</label>
+                <span className="text-red-500">*</span>
+                <Select
+                  required
+                  value={formData.researchDomain}
+                  onValueChange={(value) =>
+                    handleChange("researchDomain", value)
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select domain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {researchDomains.map((domain) => (
+                      <SelectItem key={domain} value={domain}>
+                        {domain.replaceAll("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-2">
-              <label className="font-medium">
-                Research Domain
-              </label>
-
-              <Select
-                value={formData.researchDomain}
-                onValueChange={(value) =>
-                  handleChange(
-                    "researchDomain",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select domain" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {researchDomains.map((domain) => (
-                    <SelectItem
-                      key={domain}
-                      value={domain}
-                    >
-                      {domain.replaceAll("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-2 w-full flex-1">
+                <label className="font-medium">Reading Stage</label>
+                <span className="text-red-500">*</span>
+                <Select
+                  required
+                  value={formData.readingStage}
+                  onValueChange={(value) => handleChange("readingStage", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select stage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {readingStages.map((stage) => (
+                      <SelectItem key={stage} value={stage}>
+                        {stage.replaceAll("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* Reading Stage */}
+            <div className="flex gap-4 w-full">
+              <div className="space-y-2 w-full flex-1">
+                <label className="font-medium">Citation Count</label>
+                <span className="text-red-500">*</span>
+                <Input
+                  required
+                  type="number"
+                  min="0"
+                  placeholder="Enter citations"
+                  value={formData.citationCount}
+                  onChange={(e) =>
+                    handleChange("citationCount", e.target.value)
+                  }
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label className="font-medium">
-                Reading Stage
-              </label>
+              <div className="space-y-2 w-full flex-1">
+                <label className="font-medium">Impact Score</label>
+                <span className="text-red-500">*</span>
+                <Select
+                  required
+                  value={formData.impactScore}
+                  onValueChange={(value) => handleChange("impactScore", value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select impact" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {impactScores.map((impact) => (
+                      <SelectItem key={impact} value={impact}>
+                        {impact.replaceAll("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Select
-                value={formData.readingStage}
-                onValueChange={(value) =>
-                  handleChange(
-                    "readingStage",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select stage" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {readingStages.map((stage) => (
-                    <SelectItem
-                      key={stage}
-                      value={stage}
-                    >
-                      {stage.replaceAll("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-2 w-full flex-1">
+                <label className="font-medium">Date Added</label>
+                <span className="text-red-500">*</span>
+                <Input
+                  required
+                  type="date"
+                  className="w-full"
+                  value={formData.dateAdded}
+                  onChange={(e) => handleChange("dateAdded", e.target.value)}
+                />
+              </div>
             </div>
-
-            {/* Citation Count */}
-
-            <div className="space-y-2">
-              <label className="font-medium">
-                Citation Count
-              </label>
-
-              <Input
-                required
-                type="number"
-                min="0"
-                placeholder="Enter citations"
-                value={formData.citationCount}
-                onChange={(e) =>
-                  handleChange(
-                    "citationCount",
-                    e.target.value
-                  )
-                }
-              />
-            </div>
-
-            {/* Impact Score */}
-
-            <div className="space-y-2">
-              <label className="font-medium">
-                Impact Score
-              </label>
-
-              <Select
-                value={formData.impactScore}
-                onValueChange={(value) =>
-                  handleChange(
-                    "impactScore",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select impact" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {impactScores.map((impact) => (
-                    <SelectItem
-                      key={impact}
-                      value={impact}
-                    >
-                      {impact.replaceAll("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Date */}
-
-            <div className="space-y-2">
-              <label className="font-medium">
-                Date Added
-              </label>
-
-              <Input
-                type="date"
-                value={formData.dateAdded}
-                onChange={(e) =>
-                  handleChange(
-                    "dateAdded",
-                    e.target.value
-                  )
-                }
-              />
-            </div>
-
-            {/* Submit */}
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full"
+              className="w-full cursor-pointer bg-blue-500 hover:bg-blue-600 text-white"
             >
-              {loading
-                ? "Adding Paper..."
-                : "Add Paper"}
+              {loading ? "Adding Paper..." : "Add Paper"}
             </Button>
           </form>
         </CardContent>
