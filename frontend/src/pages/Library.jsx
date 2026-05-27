@@ -5,7 +5,6 @@ import {
   impactScores,
   dateFilters,
 } from "../data/constants";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,9 +13,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAllPapers } from "@/services/library";
+import { toast } from "sonner";
 
 function Library() {
   const [papers, setPapers] = useState([]);
@@ -31,7 +30,6 @@ function Library() {
   const fetchPapers = async () => {
     try {
       setLoading(true);
-
       const params = new URLSearchParams();
 
       if (filters.domains.length) {
@@ -51,7 +49,9 @@ function Library() {
       const { data } = await getAllPapers(params.toString());
       setPapers(data.data);
     } catch (error) {
-      console.error(error);
+      const msg = error?.response?.data?.message || "Failed to fetch papers";
+      console.error(msg);
+      toast.error("Failed to fetch papers");
     } finally {
       setLoading(false);
     }

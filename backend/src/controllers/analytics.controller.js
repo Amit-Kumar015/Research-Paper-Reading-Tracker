@@ -18,7 +18,8 @@ const getAnalytics = async (req, res) => {
         stage,
         count: papers.filter((paper) => paper.readingStage === stage).length,
       };
-    });
+    })
+    .sort((a, b) => b.count - a.count);
 
     const scatterData = papers.map((paper) => ({
       citations: paper.citationCount,
