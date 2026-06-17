@@ -104,7 +104,7 @@ function Library() {
                   <button
                     key={domain}
                     onClick={() => toggleFilter("domains", domain)}
-                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 cursor-pointer"
                     style={{
                       background: active ? "#6366f1" : "#f3f4f6",
                       color: active ? "#ffffff" : "#6b7280",
@@ -131,7 +131,7 @@ function Library() {
                   <button
                     key={stage}
                     onClick={() => toggleFilter("stages", stage)}
-                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 cursor-pointer"
                     style={{
                       background: active ? "#3b82f6" : "#f3f4f6",
                       color: active ? "#ffffff" : "#6b7280",
@@ -167,7 +167,7 @@ function Library() {
                   <button
                     key={impact}
                     onClick={() => toggleFilter("impacts", impact)}
-                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 cursor-pointer"
                     style={{
                       background: active ? accent.on : accent.off,
                       color: active ? "#ffffff" : "#6b7280",
@@ -199,7 +199,7 @@ function Library() {
                         dateFilter: active ? null : date.value,
                       }))
                     }
-                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150"
+                    className="rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 cursor-pointer"
                     style={{
                       background: active ? "#8b5cf6" : "#f3f4f6",
                       color: active ? "#ffffff" : "#6b7280",
