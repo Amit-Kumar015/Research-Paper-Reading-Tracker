@@ -41,11 +41,17 @@ function AddPaper() {
     setLoading(true);
 
     if (
-      !formData.researchDomain ||
-      !formData.readingStage ||
-      !formData.impactScore
+      !formData.researchDomain || formData.researchDomain === "" ||
+      !formData.readingStage || formData.readingStage === "" ||
+      !formData.impactScore || formData.impactScore === ""
     ) {
       toast.error("Please fill in all required fields");
+      setLoading(false);
+      return;
+    }
+
+    if(Number(formData.citationCount) < 0){
+      toast.error("Citation count cannot be negative");
       setLoading(false);
       return;
     }
